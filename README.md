@@ -29,6 +29,13 @@ Open your terminal in the project root and run:
 mvn clean compile exec:java \
 -Dexec.mainClass="com.codetoculture.agents.AdTechAnalyzerAgent" \
 ```
+### Check the Ollama Server logs
+
+If the Agent is not working, you can check the Ollama server logs to see if there are any errors.
+
+```bash
+tail -f ~/.ollama/logs/server.log
+```
 
 ### Interact
 
@@ -42,3 +49,4 @@ Open your browser and navigate to [http://localhost:8080](http://localhost:8080)
 - "What is the status of the SSP-123 campaign?" (This should trigger the agent to use the `getBiddingMetrics` tool).
 - "Can you check on DSP-99 and tell me if the win rate is healthy?"
 - "I need an analysis of campaign XYZ-456. Based on its metrics, how can we optimize it?"
+
