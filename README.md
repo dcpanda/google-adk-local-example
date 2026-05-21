@@ -15,6 +15,25 @@ _(skip if you have already ollama running locally)_
 2. **Pull the model**: Run `ollama pull gemma4:latest` (or the model specified in `AdTechAnalyzerAgent.java`).
 3. **Run Ollama**: Ensure the Ollama application is running.
 
+## Google Gemini Setup
+
+The agent can use Google Gemini Flash when `GOOGLE_API_KEY` is available in your environment.
+
+1. **Get an API key**: Create one at [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. **Set the key**:
+   ```bash
+   export GOOGLE_API_KEY=your-api-key-here
+   ```
+3. **Run the agent** — it will automatically use Gemini Flash:
+   ```bash
+   mvn clean compile exec:java \
+   -Dexec.mainClass="com.codetoculture.agents.AdTechAnalyzerAgent"
+   ```
+
+When `GOOGLE_API_KEY` is not set, the agent falls back to the local Ollama model.
+
+> A `.env.example` file is provided for reference.
+
 ## Local Setup
 
 ### Start your local LLM Server

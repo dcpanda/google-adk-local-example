@@ -22,31 +22,31 @@ public class AdTechAnalyzerAgent {
     }
 
     public static void main(String[] args) {
-        // 2. Configure the local server connection
-        // baseUrl to "http://localhost:11434/v1" if using Ollama
-        // I was unable to make this work with Lm Studio, so I'm using Ollama instead.
-        OpenAiChatModel localModel = OpenAiChatModel.builder()
-                .baseUrl("http://localhost:11434/v1")
-                .apiKey("local-ignore")
-                .modelName("gemma4:latest")
-                .timeout(Duration.ofSeconds(120))
-                .build();
-
-        // 3. Wrap the LangChain4j model for the Google ADK
-        LangChain4j adkLocalModel = LangChain4j.builder()
-                .chatModel(localModel)
-                .modelName("gemma4:latest")
-                .build();
-
-        //4. Start the Agent
-        AdkWebServer.start( LlmAgent.builder()
+        var builder = LlmAgent.builder()
                 .name("AdTech Analyzer")
                 .description("An AI assistant for programmatic ad bidding analysis.")
-                .model(adkLocalModel)
                 .instruction("You are an expert AdTech assistant. Use the provided tools to fetch campaign metrics and provide clear optimization recommendations based on the data.")
-                .tools(FunctionTool.create(AdTechAnalyzerAgent.class, "getBiddingMetrics"))
-                .build()
-        );
+                .tools(FunctionTool.create(AdTechAnalyzerAgent.class, "getBiddingMetrics"));
+
+        String googleApiKey = System.getenv("GOOGLE_API_KEY");
+
+        if (googleApiKey != null && !googleApiKey.isBlank()) {
+            builder.model("gemini-3.1-flash-lite");
+        } else {
+            OpenAiChatModel localModel = OpenAiChatModel.builder()
+                    .baseUrl("http://localhost:11434/v1")
+                    .apiKey("local-ignore")
+                    .modelName("gemma4:latest")
+                    .timeout(Duration.ofSeconds(120))
+                    .build();
+
+            builder.model(LangChain4j.builder()
+                    .chatModel(localModel)
+                    .modelName("gemma4:latest")
+                    .build());
+        }
+
+        AdkWebServer.start(builder.build());
 
         System.out.println("Agent initialized successfully.");
     }
